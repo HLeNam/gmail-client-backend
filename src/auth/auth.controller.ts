@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 import { RtGuard } from './guards/rt.guard';
 import { ConfigType } from '@nestjs/config';
 import { Response } from 'express';
-import jwtConfig from 'src/config/jwt.config';
+import jwtConfig from '../config/jwt.config';
 
 @Controller('auth')
 export class AuthController {

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { IAttachmentData } from './interfaces/attachment-data.interfaces';
 import { GmailService } from '../gmail/gmail.service';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AttachmentService {
