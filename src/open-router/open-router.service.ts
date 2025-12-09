@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import OpenAI from 'openai';
-import openRouterConfig from 'src/config/open-router.config';
+import openRouterConfig from '../config/open-router.config';
 
 @Injectable()
 export class OpenRouterService {

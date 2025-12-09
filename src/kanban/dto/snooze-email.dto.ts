@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsDateString } from 'class-validator';
-import { EmailSummaryDto } from 'src/mailbox/dto/email-summary.dto';
+import { EmailSummaryDto } from '../../mailbox/dto/email-summary.dto';
 
 export enum SnoozePreset {
   LATER_TODAY = 'later_today',

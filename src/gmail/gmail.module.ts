@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GmailService } from './gmail.service';
 import { GmailController } from './gmail.controller';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [

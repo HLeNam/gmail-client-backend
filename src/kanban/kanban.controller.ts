@@ -19,11 +19,11 @@ import { MoveEmailDto } from './dto/move-email.dto';
 import { BatchMoveEmailDto } from './dto/batch-move-email.dto';
 import { ReorderEmailsDto } from './dto/reorder-email.dto';
 import { SnoozeEmailDto } from './dto/snooze-email.dto';
-import { PinEmailDto, SetPriorityDto } from 'src/kanban/dto/pin-email.dto';
+import { PinEmailDto, SetPriorityDto } from '../kanban/dto/pin-email.dto';
 import {
   BatchSummarizeDto,
   SummarizeEmailDto,
-} from 'src/kanban/dto/summarize-email.dto';
+} from '../kanban/dto/summarize-email.dto';
 
 @Controller('emails/kanban')
 @UseGuards(AtGuard)

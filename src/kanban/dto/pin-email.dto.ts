@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsNumber, Min } from 'class-validator';
-import { KanbanColumnId } from 'src/kanban/dto/kanban-column.dto';
+import { KanbanColumnId } from '../../kanban/dto/kanban-column.dto';
 
 export class PinEmailDto {
   @ApiProperty({

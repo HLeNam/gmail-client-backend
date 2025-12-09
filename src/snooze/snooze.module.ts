@@ -3,8 +3,8 @@ import { SnoozeService } from './snooze.service';
 import { GmailModule } from '../gmail/gmail.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailSnooze } from '../email/entities/email-snooze.entity';
-import { SnoozeScheduler } from 'src/snooze/snooze.scheduler';
-import { EmailKanbanOrder } from 'src/email/entities/email-kanban-order.entity';
+import { SnoozeScheduler } from '../snooze/snooze.scheduler';
+import { EmailKanbanOrder } from '../email/entities/email-kanban-order.entity';
 
 @Module({
   imports: [

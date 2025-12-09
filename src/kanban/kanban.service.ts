@@ -35,15 +35,15 @@ import {
   PinEmailDto,
   PinResponseDto,
   SetPriorityDto,
-} from 'src/kanban/dto/pin-email.dto';
+} from '../kanban/dto/pin-email.dto';
 import {
   BatchSummarizeDto,
   BatchSummarizeResponseDto,
   SummarizeEmailDto,
   SummarizeResponseDto,
   SummaryStatsDto,
-} from 'src/kanban/dto/summarize-email.dto';
-import { EmailSummaryDto } from 'src/mailbox/dto/email-summary.dto';
+} from '../kanban/dto/summarize-email.dto';
+import { EmailSummaryDto } from '../mailbox/dto/email-summary.dto';
 
 @Injectable()
 export class KanbanService {

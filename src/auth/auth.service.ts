@@ -3,13 +3,13 @@ import { ConfigType } from '@nestjs/config/dist/types/config.type';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-import googleOauthConfig from 'src/config/google-oauth.config';
-import jwtConfig from 'src/config/jwt.config';
-import { GmailService } from 'src/gmail/gmail.service';
-import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
-import { encrypt } from 'src/utils/encrypt.util';
-import { compareHashedText } from 'src/utils/hash.util';
+import googleOauthConfig from '../config/google-oauth.config';
+import jwtConfig from '../config/jwt.config';
+import { GmailService } from '../gmail/gmail.service';
+import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
+import { encrypt } from '../utils/encrypt.util';
+import { compareHashedText } from '../utils/hash.util';
 
 @Injectable()
 export class AuthService {

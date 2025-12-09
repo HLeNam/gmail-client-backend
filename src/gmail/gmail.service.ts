@@ -2,9 +2,9 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { gmail_v1, google } from 'googleapis';
-import googleOauthConfig from 'src/config/google-oauth.config';
-import { UserService } from 'src/user/user.service';
-import { decrypt } from 'src/utils/encrypt.util';
+import googleOauthConfig from '../config/google-oauth.config';
+import { UserService } from '../user/user.service';
+import { decrypt } from '../utils/encrypt.util';
 
 @Injectable()
 export class GmailService {

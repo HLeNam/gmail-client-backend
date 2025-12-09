@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { GmailService } from './gmail.service';
-import { AtGuard } from 'src/auth/guards/at.guard';
+import { AtGuard } from '../auth/guards/at.guard';
 import { ApiSecurity } from '@nestjs/swagger';
 
 @Controller('gmail')
