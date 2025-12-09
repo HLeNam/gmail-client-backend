@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ThreadController } from './thread.controller';
 import { ThreadService } from './thread.service';
-import { GmailModule } from '../gmail/gmail.module';
+import { GmailModule } from 'src/gmail/gmail.module';
 
 @Module({
   imports: [GmailModule],

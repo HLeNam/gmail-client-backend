@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 import { RtGuard } from './guards/rt.guard';
 import { ConfigType } from '@nestjs/config';
 import { Response } from 'express';
-import jwtConfig from '../config/jwt.config';
+import jwtConfig from 'src/config/jwt.config';
 
 @Controller('auth')
 export class AuthController {
@@ -35,7 +35,8 @@ export class AuthController {
 
     res.cookie('refresh_token', data.appRefreshToken, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
+      secure: true,
       maxAge: this.jwtRefreshExpiration,
     });
 
@@ -61,7 +62,8 @@ export class AuthController {
 
     res.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
+      secure: true,
       maxAge: this.jwtRefreshExpiration,
     });
 

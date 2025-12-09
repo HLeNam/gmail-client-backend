@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { GmailService } from '../gmail/gmail.service';
 import { ThreadDetailDto } from './dto/thread-detail.dto';
-import { getHeaderValue, parseEmailDetail } from '../utils/email.util';
+import { getHeaderValue, parseEmailDetail } from 'src/utils/email.util';
 import { gmail_v1 } from 'googleapis';
-import { ThreadListItemDto } from '../thread/dto/thread-list-item.dto';
-import { ThreadsListResponseDto } from '../thread/dto/threads-list-response.dto';
+import { ThreadListItemDto } from 'src/thread/dto/thread-list-item.dto';
+import { ThreadsListResponseDto } from 'src/thread/dto/threads-list-response.dto';
 
 @Injectable()
 export class ThreadService {
