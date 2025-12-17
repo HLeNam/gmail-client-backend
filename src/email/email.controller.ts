@@ -13,12 +13,14 @@ import {
 } from '@nestjs/common';
 import { AtGuard } from '../auth/guards/at.guard';
 import { EmailService } from './email.service';
+import { EmailSynceService } from './sync/email_sync.service';
 import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
   ApiResponse,
   ApiSecurity,
+  ApiTags,
 } from '@nestjs/swagger';
 import { ModifyEmailDto } from './dto/modify-email.dto';
 import { DeleteBatchEmailDto } from './dto/delete-batch-email.dto';
@@ -30,9 +32,13 @@ import { SendEmailSwaggerDto } from './dto/send-email-swagger.dto';
 import { parseBoolean, parseEmailArray } from '../utils/form-data-parser.util';
 
 @Controller('emails')
+@ApiTags('Emails')
 @UseGuards(AtGuard)
 export class EmailController {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly emailSyncService: EmailSynceService,
+  ) {}
 
   @Delete('batch-delete')
   @ApiSecurity('jwt')
@@ -448,6 +454,4 @@ fetch('http://localhost:3000/api/emails/18d8f2a3b4c5d6e7/reply', {
       files,
     });
   }
-
-  
 }
