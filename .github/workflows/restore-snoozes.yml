@@ -28,7 +28,7 @@ jobs:
           echo "Response: $body"
           echo "HTTP Code: $http_code"
 
-          if [ "$http_code" -ne 200 ]; then
+          if [ "$http_code" -ne 200 ] && [ "$http_code" -ne 201 ]; then
             echo "❌ Cron job failed with status $http_code"
             exit 1
           fi
