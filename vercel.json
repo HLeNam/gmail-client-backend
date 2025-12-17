@@ -12,5 +12,11 @@
       "dest": "src/main.ts",
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/v1/cron/restore-snoozes",
+      "schedule": "*/1 * * * *"
+    }
   ]
 }

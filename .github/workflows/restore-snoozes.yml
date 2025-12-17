@@ -4,7 +4,7 @@ on:
   schedule:
     # Chạy mỗi phút (*/1)
     # Format: minute hour day month weekday
-    - cron: '*/1 * * * *'
+    - cron: '*/5 * * * *'
 
   # Cho phép trigger thủ công từ GitHub UI
   workflow_dispatch:
