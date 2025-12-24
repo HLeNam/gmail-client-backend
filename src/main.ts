@@ -4,7 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform/transform.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
+// import * as cookieParser from 'cookie-parser';
+const cookieParser = require('cookie-parser');
 // import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
