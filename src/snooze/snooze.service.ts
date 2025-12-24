@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,9 +10,13 @@ import { EmailKanbanOrder } from '../email/entities/email-kanban-order.entity';
 import { LessThanOrEqual, Repository } from 'typeorm';
 import { GmailService } from '../gmail/gmail.service';
 import { SnoozePreset } from '../kanban/dto/snooze-email.dto';
+import { KanbanColumnConfig } from '../kanban/entities/kanban-column-config.entity';
+import { SnoozeGateway } from '../snooze/snooze.gateway';
 
 @Injectable()
 export class SnoozeService {
+  private readonly logger = new Logger(SnoozeService.name);
+
   constructor(
     @InjectRepository(EmailSnooze)
     private readonly snoozeRepository: Repository<EmailSnooze>,
@@ -19,7 +24,12 @@ export class SnoozeService {
     @InjectRepository(EmailKanbanOrder)
     private readonly orderRepository: Repository<EmailKanbanOrder>,
 
+    @InjectRepository(KanbanColumnConfig)
+    private readonly columnConfigRepository: Repository<KanbanColumnConfig>,
+
     private readonly gmailService: GmailService,
+
+    private readonly snoozeGateway: SnoozeGateway,
   ) {}
 
   calculateSnoozeTime(preset: SnoozePreset, customDate?: string): Date {
@@ -160,21 +170,14 @@ export class SnoozeService {
   }
 
   async restoreEmail(snooze: EmailSnooze): Promise<void> {
-    const columnLabelMap = {
-      inbox: ['INBOX'],
-      todo: ['Kanban/To Do'],
-      in_progress: ['Kanban/In Progress'],
-      done: ['Kanban/Done'],
-    };
+    const originalColumn = await this.columnConfigRepository.findOne({
+      where: {
+        userId: snooze.userId,
+        id: snooze.originalColumn,
+      },
+    });
 
-    const restoreLabels: string[] = columnLabelMap[snooze.originalColumn] || [
-      'INBOX',
-    ];
-
-    const restoreLabelIds = await this.gmailService.convertLabelNamesToIds(
-      snooze.userId,
-      restoreLabels,
-    );
+    const restoreLabels: string[] = [originalColumn?.gmailLabel || 'INBOX'];
 
     const removeLabelIds =
       (await this.gmailService.getLabelIdByName(
@@ -183,7 +186,7 @@ export class SnoozeService {
       )) || '';
 
     await this.gmailService.modifyMessage(snooze.userId, snooze.emailId, {
-      addLabelIds: restoreLabelIds,
+      addLabelIds: restoreLabels,
       removeLabelIds: [removeLabelIds],
     });
 
@@ -206,6 +209,8 @@ export class SnoozeService {
       columnId: snooze.originalColumn,
       order: newOrder,
     });
+
+    await this.snoozeRepository.delete(snooze.id);
   }
 
   async restoreDueSnoozes(): Promise<number> {
@@ -218,6 +223,10 @@ export class SnoozeService {
       },
     });
 
+    if (dueSnoozes.length === 0) return 0;
+
+    this.logger.log(`Found ${dueSnoozes.length} snooze(s) to restore`);
+
     let restoredCount = 0;
 
     for (const snooze of dueSnoozes) {
@@ -227,6 +236,13 @@ export class SnoozeService {
         snooze.isRestored = true;
         snooze.restoredAt = new Date();
         await this.snoozeRepository.save(snooze);
+
+        // Notify user via WebSocket
+        this.snoozeGateway.notifyEmailRestored(
+          snooze.userId.toString(),
+          snooze.emailId,
+          snooze.originalColumn.toString(),
+        );
 
         restoredCount++;
       } catch (error) {

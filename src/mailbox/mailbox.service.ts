@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GmailService } from '../gmail/gmail.service';
-// import { getHeaderValue } from 'src/utils/email.util';
+// import { getHeaderValue } from '../utils/email.util';
 import { LabelDto } from './dto/label.dto';
 import { EmailListResponseDto } from './dto/email-list-response.dto';
 // import { EmailSummaryDto } from './dto/email-summary.dto';

@@ -8,8 +8,7 @@ import { EmailSummary } from '../email/entities/email-summary.entity';
 import { EmailKanbanOrder } from '../email/entities/email-kanban-order.entity';
 import { EmailSnooze } from '../email/entities/email-snooze.entity';
 import { SnoozeModule } from '../snooze/snooze.module';
-import { OpenRouterModule } from '../open-router/open-router.module';
-import { OpenRouterService } from '../open-router/open-router.service';
+import { KanbanColumnConfig } from '../kanban/entities/kanban-column-config.entity';
 
 @Module({
   imports: [
@@ -19,11 +18,11 @@ import { OpenRouterService } from '../open-router/open-router.service';
       EmailSummary,
       EmailKanbanOrder,
       EmailSnooze,
+      KanbanColumnConfig,
     ]),
     SnoozeModule,
-    OpenRouterModule
   ],
   controllers: [KanbanController],
-  providers: [KanbanService, OpenRouterService],
+  providers: [KanbanService],
 })
 export class KanbanModule {}
