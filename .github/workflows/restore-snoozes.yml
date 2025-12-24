@@ -17,7 +17,7 @@ jobs:
       - name: Call Vercel API Endpoint
         run: |
           response=$(curl -X POST https://gmail-client-backend.vercel.app/api/v1/cron/restore-snoozes \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             -w "\n%{http_code}" \
             -s)
