@@ -2,9 +2,12 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { gmail_v1, google } from 'googleapis';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import googleOauthConfig from '../config/google-oauth.config';
 import { UserService } from '../user/user.service';
 import { decrypt } from '../utils/encrypt.util';
+import { GmailSyncState } from './entities/gmail-sync-state.entity';
 
 @Injectable()
 export class GmailService {
@@ -13,6 +16,8 @@ export class GmailService {
     private googleOauthConfiguration: ConfigType<typeof googleOauthConfig>,
     private userService: UserService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @InjectRepository(GmailSyncState)
+    private gmailSyncStateRepository: Repository<GmailSyncState>,
   ) {}
 
   public async getAuthenticatedGmailClient(userId: number) {
@@ -185,7 +190,7 @@ export class GmailService {
     //   },
     // });
 
-    // batch modify to add TRASH label
+    // move to trash instead of permanent delete
     const res = await gmail.users.messages.batchModify({
       userId: 'me',
       requestBody: {
@@ -492,5 +497,58 @@ export class GmailService {
     // Note: cache-manager doesn't support wildcard delete
     // You'll need to track keys or use Redis for pattern-based deletion
     // For now, we rely on TTL expiration
+  }
+
+  async getMailboxHistory(
+    userId: number,
+    startHistoryId?: string,
+    maxResults: number = 100,
+    pageToken?: string,
+  ) {
+    const gmail = await this.getAuthenticatedGmailClient(userId);
+    const res = await gmail.users.history.list({
+      userId: 'me',
+      startHistoryId: startHistoryId,
+      maxResults: maxResults,
+      pageToken: pageToken,
+      historyTypes: ['messageAdded', 'messageDeleted'],
+    });
+    return res.data;
+  }
+
+  async getLastHistoryId(userId: number): Promise<string | null> {
+    const syncState = await this.gmailSyncStateRepository.findOne({
+      where: { userId },
+    });
+    return syncState?.lastHistoryId || null;
+  }
+
+  async updateLastHistoryId(userId: number, historyId: string): Promise<void> {
+    let syncState = await this.gmailSyncStateRepository.findOne({
+      where: { userId },
+    });
+
+    if (!syncState) {
+      syncState = this.gmailSyncStateRepository.create({
+        userId,
+        lastHistoryId: historyId,
+      });
+    } else {
+      syncState.lastHistoryId = historyId;
+    }
+
+    await this.gmailSyncStateRepository.save(syncState);
+  }
+
+  /**
+   * Get the current user profile including historyId
+   * Used when initializing history sync for the first time
+   */
+  async getProfile(userId: number): Promise<gmail_v1.Schema$Profile> {
+    const gmail = await this.getAuthenticatedGmailClient(userId);
+    const res = await gmail.users.getProfile({
+      userId: 'me',
+    });
+    return res.data;
   }
 }

@@ -35,8 +35,7 @@ export class AuthController {
 
     res.cookie('refresh_token', data.appRefreshToken, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      sameSite: 'lax',
       maxAge: this.jwtRefreshExpiration,
     });
 
@@ -62,8 +61,7 @@ export class AuthController {
 
     res.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      sameSite: 'lax',
       maxAge: this.jwtRefreshExpiration,
     });
 
