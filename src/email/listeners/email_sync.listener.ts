@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent, EventEmitter2 } from '@nestjs/event-emitter';
 import { GmailService } from '../../gmail/gmail.service';
 import { EmailSynceService } from '../sync/email_sync.service';
+import { SnoozeGateway } from '../../snooze/snooze.gateway';
 import { EmailSyncEvent } from '../events/email_sync.event';
 import { EmailEmbeddingEvent } from '../events/email_embedding.event';
 
@@ -14,12 +15,30 @@ export class EmailSyncListener {
     private emailSyncService: EmailSynceService,
     private gmailService: GmailService,
     private eventEmitter: EventEmitter2,
+    private readonly snoozeGateway: SnoozeGateway,
   ) {}
 
-  @OnEvent('email.sync')
+  @OnEvent('email.sync', { async: true })
   async handleSyncOldEmails(payload: EmailSyncEvent) {
     const { userId, pageToken, pageCount } = payload;
 
+    // pageCount = 0 là first batch
+    if (pageCount === 0) {
+      try {
+        this.logger.debug(`Starting background sync for User ${userId}...`);
+        const savedIds = await this.emailSyncService.syncFirstBatch(userId);
+
+        if (savedIds && savedIds.length > 0) {
+          // Notify frontend about saved email IDs via SnoozeGateway
+          this.snoozeGateway.notifyNewEmails(userId.toString(), savedIds);
+        }
+      } catch (error) {
+        this.logger.error(`Error starting sync for user ${userId}`, error);
+      }
+      return;
+    }
+
+    // Xử lý các pages tiếp theo
     if (!pageToken || pageCount > this.MAX_PAGES) {
       this.logger.log(
         `Background sync job finished for User ${userId}. Pages: ${pageCount}`,
@@ -48,6 +67,11 @@ export class EmailSyncListener {
         messages,
         gmail,
       );
+
+      // Notify frontend about saved email IDs via SnoozeGateway
+      if (emailIds.length > 0) {
+        this.snoozeGateway.notifyNewEmails(userId.toString(), emailIds);
+      }
 
       // Trigger background embedding generation
       if (emailIds.length > 0) {
