@@ -178,12 +178,22 @@ export class GmailService {
 
   async batchDeleteMessages(userId: number, messageIds: string[]) {
     const gmail = await this.getAuthenticatedGmailClient(userId);
-    const res = await gmail.users.messages.batchDelete({
+    // const res = await gmail.users.messages.batchDelete({
+    //   userId: 'me',
+    //   requestBody: {
+    //     ids: messageIds,
+    //   },
+    // });
+
+    // batch modify to add TRASH label
+    const res = await gmail.users.messages.batchModify({
       userId: 'me',
       requestBody: {
         ids: messageIds,
+        addLabelIds: ['TRASH'],
       },
     });
+
     return res.data;
   }
 
